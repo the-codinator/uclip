@@ -53,30 +53,38 @@ function error {
   exit 1
 }
 
+function validate {
+  [[ "1232fakfAKAK_" =~ ^[[:alnum:]_-]{1,100}$ ]] || error "UClip ID can only contain alphabets, numbers, hyphen, underscore"
+  [[ "1232fakfAKAK_" =~ ^[[:alnum:]_-]{0,100}$ ]] || error "Encryption can only contain alphabets, numbers, hyphen, underscore"
+}
+
 function login {
-  echo -n "Enter UClip ID (1 word, lowercase): "
+  echo -n "Enter UClip ID (1 word, letters/numbers/hyphen/underscore): "
   read ADDRESS
-  [[ $ADDRESS = *" "* ]] && error "ID must NOT contain any spaces"
-  echo -n "Enter encryption string (1 word) (optional): "
+  validate
+  echo -n "Enter encryption string (1 word, letters/numbers/hyphen/underscore) (optional): "
   read PASSWORD
-  [[ $PASSWORD = *" "* ]] && error "Key must NOT contain any spaces"
+  validate
   echo "$ADDRESS $PASSWORD" | base64 > "$CREDS_FILE"
 }
 
 function logout {
-  echo "Old Creds:"
-  echo "ID: $ADDRESS"
-  echo "Key: $PASSWORD"
+  echo "Old Creds: $ADDRESS / $PASSWORD"
   rm -f "$CREDS_FILE"
 }
 
 function creds {
-  # Ensure file exists
-  [ ! -s "$CREDS_FILE" ] && error "UClip not initialized, run 'uclip login'."
-  CREDS_DATA=$(cat "$CREDS_FILE" | base64 --decode)
-  read ADDRESS PASSWORD <<< "$CREDS_DATA"
-  [ -z "$ADDRESS" ] && logout && error "Credentials file is corrupted1. Logged out."
-  return 0
+  if [ -z "$UCLIP_ID" ]
+  then
+    [ -s "$CREDS_FILE" ] || error "UClip not initialized, run 'uclip login'."
+    CREDS_DATA=$(cat "$CREDS_FILE" | base64 --decode)
+    read ADDRESS PASSWORD <<< "$CREDS_DATA"
+    [ -z "$ADDRESS" ] && logout && error "Credentials file is corrupted. Logged out."
+  else
+    ADDRESS="$UCLIP_ID"
+    PASSWORD="$UCLIP_KEY"
+  fi
+  validate
 }
 
 function encrypt {
@@ -99,15 +107,13 @@ function decrypt {
 
 function online_clipboard_write {
   CODE=$(curl --request POST --silent --write-out "%{http_code}" "https://api.cl1p.net/$ADDRESS" --header "Content-Type: text/plain" --data-raw "$CONTENT")
-  [ "$CODE" -eq "409" ] && error "Data already exists on clipboard. Read it before writing again."
-  [ "$CODE" -ne "201" ] && error "Write API did not respond correctly."
-  return 0
+  [ "$CODE" -ne "409" ] || error "Data already exists on clipboard. Read it before writing again."
+  [ "$CODE" -eq "201" ] || error "Write API did not respond correctly."
 }
 
 function online_clipboard_read {
   CONTENT=$(curl --silent "https://api.cl1p.net/$ADDRESS")
-  [ -z "$CONTENT" ] && error "No content on clipboard."
-  return 0
+  [ -n "$CONTENT" ] || error "No content on clipboard."
 }
 
 function stdout_write {
@@ -124,12 +130,11 @@ function local_clipboard_write {
 
 function local_clipboard_read {
   CONTENT=$(pbpaste)
-  [ -z "$CONTENT" ] && error "No text found on clipboard."
-  return 0
+  [ -n "$CONTENT" ] || error "No text found on clipboard."
 }
 
 # Ensure no extra params
-[ $# -gt 1 ] && error "Too many parameters. Run 'uclip help'."
+[ $# -le 1 ] || error "Too many parameters. Run 'uclip help'."
 
 # Handle login flow
 if [ "login" == "$1" ]
