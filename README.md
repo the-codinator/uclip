@@ -37,6 +37,14 @@ pbcopy/pbpaste (Mac-OS features)
   - Warning: Implemented only for Mac-OS as of now (uses pbpaste)
 - `version`: Print version
 
+## Working on Windows / Linux
+
+Everything works fine on Windows (via Git Bash / WSL) and Linux, except the local clipboard interactions (pbcopy &
+pbpaste). While I've only done some basic testing, here's how I made this work for me on other Operating Systems:
+
+- [Setup pbcopy/pbpaste on Windows for Git Bash & WSL](https://www.techtronic.us/pbcopy-pbpaste-for-wsl/)
+- [Setup pbcopy/pbpaste on Linux](https://ostechnix.com/how-to-use-pbcopy-and-pbpaste-commands-on-linux/)
+
 ## Additional Features
 
 - Share pastes: At times you may want to copy text to someone else's device (sharing content), but not want to share
