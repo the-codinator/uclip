@@ -5,9 +5,10 @@ A simple CLI utility tool to copy data across devices, over the internet!
 ## Installation
 
 - Download this file and place it on the system PATH
-  - Make sure this file's name is "uclip", else all commands need to use the actual file name instead
-  - Alternative you can clone this repo and symlink the script file (`ln -s /usr/bin/uclip <path-to-repo>/uclip`)
-- Make the actual file executable (`chmod +x uclip`)
+  - On a unix system, you can run:
+    `curl "https://raw.githubusercontent.com/the-codinator/uclip/master/uclip" -o /usr/local/bin/uclip`
+  - Alternative you can clone this repo and symlink the script file (`ln -s /usr/local/bin/uclip <path-to-repo>/uclip`)
+- Make the actual file executable (`chmod +x /usr/local/bin/uclip`)
 - Checkout usage help by running `uclip help`
 
 Code license: MIT Uses cl1p.net online clipboard Runs using Bash.
