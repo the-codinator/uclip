@@ -13,7 +13,7 @@ A simple CLI utility tool to copy data across devices, over the internet!
 Code license: MIT Uses cl1p.net online clipboard Runs using Bash.
 
 Needs CLIs (all of which should be available by default): curl, base64, openssl (optional, for encryption feature),
-pbcopy/pbpaste (Mac OS features)
+pbcopy/pbpaste (Mac-OS features)
 
 ## Available sub-commands:
 
@@ -26,14 +26,14 @@ pbcopy/pbpaste (Mac OS features)
   - You can paste text directly into the terminal and terminate the input using 'Ctrl + D' (EOF in most shells)
 - `push`: Publish text currently on your local clipboard to the online clipboard (i.e. copy from local clipboard and
   paste to online clipboard)
-  - Warning: Implemented only for MAC OS as of now (uses pbcopy)
+  - Warning: Implemented only for Mac-OS as of now (uses pbcopy)
 - `read`: Read data from the online clipboard and output it to STD-OUT
   - Useful to pipe it to another command, or redirect output to a file, or copy to local clipboard using
     clip/xclip/pbcopy
   - Note: reading clears the online clipboard
 - `pull`: Populate text currently on the online clipboard to your local clipboard (i.e. copy from online clipboard and
   paste to local clipboard)
-  - Warning: Implemented only for MAC OS as of now (uses pbpaste)
+  - Warning: Implemented only for Mac-OS as of now (uses pbpaste)
 
 ## Additional Features
 
@@ -46,13 +46,13 @@ pbcopy/pbpaste (Mac OS features)
 - An internet connection!
 - Shell (something that can run `bash scripts`), so sorry, windows may not work (probably try via `git-bash`?)
 
-This tools runs in the 'bash' environment and requires the following CLI commands for its proper functioning (these are
-generally available by default):
+This tools runs in the 'bash' environment and requires the following CLI commands for its proper functioning (generally,
+these are already available in various shells by default):
 
 - curl: To access the online clipboard
 - base64: For encoding text (to deal with special characters)
 - openssl: For encrypting data stored on the online clipboard (not used if encryption key is not set)
-- pbcopy/pbpaste: For interacting with the local clipboard on MAC OS
+- pbcopy/pbpaste: For interacting with the local clipboard on Mac-OS
 
 ## Disclaimer
 

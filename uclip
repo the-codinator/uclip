@@ -6,10 +6,17 @@
 ## Run 'uclip help' for usage details.
 ## CLI Dependencies: curl, base64, openssl (if using encryption), pbcopy/pbpaste (MAC OS)
 ## TODO: consider integrating with https://github.com/sindresorhus/clipboard-cli for cross-platform local clipboard operations
+## TODO: Use clipboard events to automatically push & pull!
+
+VERSION="1.0"
 
 if [ -z $1 ] || [ "$1" == "help" ]
 then
+  # Help text
   echo "----- UClip Utility Tool -----"
+  echo "Powered by https://cl1p.net"
+  echo "Version: v$VERSION"
+  echo
   echo "Available sub-commands:"
   echo "* login: Setup your clipboard id & optionally your encryption key"
   echo "    The 'UClip ID' must be URL compatible. It is the unique ID at which your clipboard will be hosted online"
@@ -26,39 +33,30 @@ then
   echo "* pull: Populate text currently on the online clipboard to your local clipboard (i.e. copy from online clipboard and paste to local clipboard)"
   echo "    Warning: Implemented only for MAC OS as of now (uses pbpaste)"
   echo "------------------------------"
-  echo "Dependencies:"
-  echo "This tools runs in the 'bash' environment and requires the following CLI commands for its proper functioning"
-  echo "curl: To access the online clipboard"
-  echo "base64: For encoding text (to deal with special characters)"
-  echo "openssl: For encrypting data stored on the online clipboard (not used if encryption key is not set)"
-  echo "pbcopy/pbpaste: For interacting with the local clipboard on MAC OS"
-  echo "------------------------------"
-  echo "Disclaimer:"
-  echo "This tool uses the free online clipboard service at https://cl1p.net."
-  echo "This tool is not affiliated to it in any way. This tool uses the online service to power its capabilities."
-  echo "The functionality of this tool is provided 'as-is' and without any warranty."
-  echo "Authors & copyright holders are not liable for anything. The code for this tool is available for use under the MIT license."
-  echo "------------------------------"
   echo
   echo "Happy clipping... !!"
   echo
   exit 0
 fi
 
-# Functions
+# State file
 CREDS_FILE="$HOME/.uclip"
 
+# Implementation
 function error {
+  # Log an error message to stderr and exit
   echo $1 >&2
   exit 1
 }
 
 function validate {
-  [[ "1232fakfAKAK_" =~ ^[[:alnum:]_-]{1,100}$ ]] || error "UClip ID can only contain alphabets, numbers, hyphen, underscore"
-  [[ "1232fakfAKAK_" =~ ^[[:alnum:]_-]{0,100}$ ]] || error "Encryption can only contain alphabets, numbers, hyphen, underscore"
+  # Validate ADDRESS & PASSWORD
+  [[ "$ADDRESS" =~ ^[[:alnum:]_-]{1,100}$ ]] || error "UClip ID can only contain alphabets, numbers, hyphen, underscore"
+  [[ "$PASSWORD" =~ ^[[:alnum:]_-]{0,100}$ ]] || error "Encryption can only contain alphabets, numbers, hyphen, underscore"
 }
 
 function login {
+  # Set up state
   echo -n "Enter UClip ID (1 word, letters/numbers/hyphen/underscore): "
   read ADDRESS
   validate
@@ -69,11 +67,13 @@ function login {
 }
 
 function logout {
+  # Clear state
   echo "Old Creds: $ADDRESS / $PASSWORD"
   rm -f "$CREDS_FILE"
 }
 
 function creds {
+  # Load state
   if [ -z "$UCLIP_ID" ]
   then
     [ -s "$CREDS_FILE" ] || error "UClip not initialized, run 'uclip login'."
@@ -88,6 +88,7 @@ function creds {
 }
 
 function encrypt {
+  # Encrypt / encode content
   if [ -z "$PASSWORD" ]
   then
     CONTENT=$(echo "$CONTENT" | openssl aes-256-cbc -a -base64 -salt -pass "pass:$PASSWORD")
@@ -97,6 +98,7 @@ function encrypt {
 }
 
 function decrypt {
+  # Decrypt / decode content
   if [ -z "$PASSWORD" ]
   then
     CONTENT=$(echo "$CONTENT" | openssl aes-256-cbc -d -a -base64 -pass "pass:$PASSWORD")
@@ -106,34 +108,45 @@ function decrypt {
 }
 
 function online_clipboard_write {
+  # Write content to online clipboard
   CODE=$(curl --request POST --silent --write-out "%{http_code}" "https://api.cl1p.net/$ADDRESS" --header "Content-Type: text/plain" --data-raw "$CONTENT")
   [ "$CODE" -ne "409" ] || error "Data already exists on clipboard. Read it before writing again."
   [ "$CODE" -eq "201" ] || error "Write API did not respond correctly."
 }
 
 function online_clipboard_read {
+  # Read content to online clipboard
+  # Note: Clears online clipboard
   CONTENT=$(curl --silent "https://api.cl1p.net/$ADDRESS")
   [ -n "$CONTENT" ] || error "No content on clipboard."
 }
 
 function stdout_write {
-  echo "$CONTENT"
+  # Write content to stdout
+  echo -n "$CONTENT"
+  # We don't want a new line on stdout since the pipe operator will read that extra character, while it wasn't there in the original text!
+  # So we put the new line on stderr instead for cleanliness
+  echo >&2
 }
 
 function stdin_read {
+  # Read all content from stdin
+  # Content typed / pasted needs to be terminated with an EOF (Ctrl-D)
   CONTENT=`cat`
 }
 
 function local_clipboard_write {
+  # Write content to local clipboard
   echo "$CONTENT" | pbcopy
 }
 
 function local_clipboard_read {
+  # Read content from local clipboard
   CONTENT=$(pbpaste)
   [ -n "$CONTENT" ] || error "No text found on clipboard."
 }
 
-# Ensure no extra params
+# Ensure no extra params in command
 [ $# -le 1 ] || error "Too many parameters. Run 'uclip help'."
 
 # Handle login flow
