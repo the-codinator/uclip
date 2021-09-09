@@ -8,7 +8,7 @@
 ## TODO: consider integrating with https://github.com/sindresorhus/clipboard-cli for cross-platform local clipboard operations
 ## TODO: Use clipboard events to automatically push & pull!
 
-VERSION="1.0"
+VERSION="0.1"
 
 if [ -z $1 ] || [ "$1" == "help" ]
 then
@@ -184,6 +184,10 @@ pull)
   online_clipboard_read
   decrypt
   local_clipboard_write
+  ;;
+version)
+  echo "Version: v$VERSION"
+  echo
   ;;
 *)
   error "Unknown sub-command '$1'. Run 'uclip help'."

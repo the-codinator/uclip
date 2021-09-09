@@ -35,6 +35,7 @@ pbcopy/pbpaste (Mac-OS features)
 - `pull`: Populate text currently on the online clipboard to your local clipboard (i.e. copy from online clipboard and
   paste to local clipboard)
   - Warning: Implemented only for Mac-OS as of now (uses pbpaste)
+- `version`: Print version
 
 ## Additional Features
 
