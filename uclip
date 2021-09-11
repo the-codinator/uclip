@@ -18,10 +18,10 @@ then
   echo "Version: v$VERSION"
   echo
   echo "Available sub-commands:"
-  echo "* login: Setup your clipboard id & optionally your encryption key"
+  echo "* init: Setup your clipboard id & optionally your encryption key"
   echo "    The 'UClip ID' must be URL compatible. It is the unique ID at which your clipboard will be hosted online"
   echo "    The 'Encryption Key' is used in the AES 256 crypto algorithm to protect others from reading your data"
-  echo "* logout: Clear your stored clipboard id & encryption key"
+  echo "* reset: Clear your stored clipboard id & encryption key"
   echo "* write: Write data from STD-IN to the online clipboard"
   echo "    Useful with the pipe operator to copy the output from a command"
   echo "    You can paste text directly into the terminal and terminate the input using 'Ctrl + D' (EOF in most shells)"
@@ -55,7 +55,7 @@ function validate {
   [[ "$PASSWORD" =~ ^[[:alnum:]_-]{0,100}$ ]] || error "Encryption can only contain alphabets, numbers, hyphen, underscore"
 }
 
-function login {
+function init {
   # Set up state
   echo -n "Enter UClip ID (1 word, letters/numbers/hyphen/underscore): "
   read ADDRESS
@@ -66,9 +66,9 @@ function login {
   echo "$ADDRESS $PASSWORD" | base64 > "$CREDS_FILE"
 }
 
-function logout {
+function reset {
   # Clear state
-  echo "Old Creds: $ADDRESS / $PASSWORD"
+  echo "Old details: $ADDRESS / $PASSWORD"
   rm -f "$CREDS_FILE"
 }
 
@@ -76,10 +76,10 @@ function creds {
   # Load state
   if [ -z "$UCLIP_ID" ]
   then
-    [ -s "$CREDS_FILE" ] || error "UClip not initialized, run 'uclip login'."
+    [ -s "$CREDS_FILE" ] || error "UClip not initialized, run 'uclip init'."
     CREDS_DATA=$(cat "$CREDS_FILE" | base64 --decode)
     read ADDRESS PASSWORD <<< "$CREDS_DATA"
-    [ -z "$ADDRESS" ] && logout && error "Credentials file is corrupted. Logged out."
+    [ -z "$ADDRESS" ] && reset && error "State file is corrupted. Resetting ID & Key."
   else
     ADDRESS="$UCLIP_ID"
     PASSWORD="$UCLIP_KEY"
@@ -149,10 +149,10 @@ function local_clipboard_read {
 # Ensure no extra params in command
 [ $# -le 1 ] || error "Too many parameters. Run 'uclip help'."
 
-# Handle login flow
-if [ "login" == "$1" ]
+# Handle init flow
+if [ "init" == "$1" ]
 then
-  login
+  init
   creds
   exit 0
 fi
@@ -162,8 +162,8 @@ creds
 
 # Handle sub-commands
 case "$1" in
-logout)
-  logout
+reset)
+  reset
   ;;
 write)
   stdin_read

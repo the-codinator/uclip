@@ -2,6 +2,9 @@
 
 A simple CLI utility tool to copy data across devices, over the internet!
 
+![Shell CLI tool](https://img.shields.io/badge/runtime-bash-blue)
+![Development Release Status](https://img.shields.io/badge/release-beta-orange)
+
 ## Installation
 
 - Download this file and place it on the system PATH
@@ -18,10 +21,10 @@ pbcopy/pbpaste (Mac-OS features)
 
 ## Available sub-commands:
 
-- `login`: Set up your clipboard id & optionally your encryption key
+- `init`: Set up your clipboard id & optionally your encryption key
   - The 'UClip ID' must be URL compatible. It is the unique ID at which your clipboard will be hosted online
   - The 'Encryption Key' is used in the AES 256 crypto algorithm to protect others from reading your data
-- `logout`: Clear your stored clipboard id & encryption key
+- `reset`: Clear your stored clipboard id & encryption key
 - `write`: Write data from STD-IN to the online clipboard
   - Useful with the pipe operator to copy the output from a command
   - You can paste text directly into the terminal and terminate the input using 'Ctrl + D' (EOF in most shells)
