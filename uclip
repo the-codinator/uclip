@@ -68,7 +68,7 @@ function init {
 
 function reset {
   # Clear state
-  echo "Old details: $ADDRESS / $PASSWORD"
+  echo "Old ID / Key: $ADDRESS / $PASSWORD"
   rm -f "$CREDS_FILE"
 }
 

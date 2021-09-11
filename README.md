@@ -14,10 +14,7 @@ A simple CLI utility tool to copy data across devices, over the internet!
 - Make the actual file executable (`chmod +x /usr/local/bin/uclip`)
 - Checkout usage help by running `uclip help`
 
-Code license: MIT Uses cl1p.net online clipboard Runs using Bash.
-
-Needs CLIs (all of which should be available by default): curl, base64, openssl (optional, for encryption feature),
-pbcopy/pbpaste (Mac-OS features)
+Runs as a bash shell script & uses cl1p.net online clipboard.
 
 ## Available sub-commands:
 
