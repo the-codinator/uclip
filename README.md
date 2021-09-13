@@ -11,8 +11,8 @@ UClip runs as a bash shell script & uses cl1p.net online clipboard.
 
 - Download the [script file](./uclip) and place it on the system `PATH`
   - You can clone this repo (`git clone https://github.com/the-codinator/uclip.git`)
-    and symlink the script file to some place on the PATH (`ln -s /usr/local/bin/uclip <path-to-repo>/uclip`).
-    This allows you to easily update the script by just running `git pull`
+    and symlink the script file to some place on the PATH (`ln -s /usr/local/bin/uclip <path-to-repo>/uclip`). This
+    allows you to easily update the script by just running `git pull`
   - Alternatively, you can direct download the file and place it on the system `PATH`:
     `curl "https://raw.githubusercontent.com/the-codinator/uclip/master/uclip" -o /usr/local/bin/uclip`
 - Make the actual file executable (`chmod +x <path-to-uclip-file>`)
@@ -46,12 +46,6 @@ pbpaste). While I've only done some basic testing, here's how I made this work f
 
 - [Setup pbcopy/pbpaste on Windows for Git Bash & WSL](https://www.techtronic.us/pbcopy-pbpaste-for-wsl/)
 - [Setup pbcopy/pbpaste on Linux](https://ostechnix.com/how-to-use-pbcopy-and-pbpaste-commands-on-linux/)
-
-## Additional Features
-
-- Share pastes: At times you may want to copy text to someone else's device (sharing content), but not want to share
-  your clipboard id & key. You can temporarily override the account ID & Key using the environment variables `UCLIP_ID`
-  & `UCLIP_KEY`. As with the default encryption key, `UCLIP_KEY` is optional.
 
 ## Requirements & Dependencies
 
@@ -87,3 +81,42 @@ account [here](https://cl1p.net/sys/login.jsp) (no email required!), which allow
 clips longer, and view access logs, and add password protection. You can support the service by purchasing a premium
 (dedicated) URL for as little as $5 a year! The premium features allow you to create dedicated urls, restore previous
 settings, even longer retention, and more... Help keep the service alive!
+
+## FAQ & Cool Tips
+
+### How should I choose an ID ?
+
+Since this ID needs to be globally unique, please choose something that is somewhat complex to avoid collisions with
+other users. Beyond that, any alphanumeric word with hyphens & underscores is fine.
+
+### Is the Encryption Key a password ? How safe is it to copy sensitive data ?
+
+Kind of. Since the online clipboard is a public / 3rd party service, I added the feature to automatically encrypt your
+copied data using a user-provided encryption key. If the encryption key is not provided, then a simple Base64 encoding
+is done (more to deal with special characters in the input). The key is treated as symmetric and used by `openssl` to
+encrypt / decrypt content using the AES-256-CBC cryptographic algorithm.
+
+That said, the encryption system is a pretty basic one, and I would strongly discourage pushing stuff like credit card
+info, etc. Use at your own risk.
+
+### I keep getting an error while trying to push: "Data already exists on clipboard. Read it before writing again."
+
+This could be for 2 reasons:
+
+- You are trying to write to the online clipboard before you have read it. The online clipboard allows you to store
+  exactly 1 text snippet. To avoid losing data, you cannot write new content until the previous content has been read.
+- You are using a very common ID, hence data is getting mixed up between you and some other user. Set up again with a
+  different ID. (`uclip reset` & `uclip init`)
+
+### I'm trying to read the copied data multiple times / from multiple devices, and I get "No content on clipboard."
+
+Due to limitations of the free online service, the content on the online clipboard is available for reading exactly
+once. To read multiple times, simple read it once, and write the same content back. Repeat as many times as needed. I'll
+look to add better support for this kind of use case in the future.
+
+### I want to use a temporary ID and share text with a colleague
+
+At times, you may want to copy text to someone else's device (sharing content), but not want to share your clipboard ID
+& Key. You can temporarily override the ID & Key using the environment variables `UCLIP_ID` & `UCLIP_KEY`. As with the
+default encryption key, `UCLIP_KEY` is optional. To stop overriding, reset `UCLIP_ID` to an empty string or reset your
+shell session.
