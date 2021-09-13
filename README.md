@@ -41,8 +41,9 @@ UClip runs as a bash shell script & uses cl1p.net online clipboard.
 
 ## Working on Windows / Linux
 
-Everything works fine on Windows (via Git Bash / WSL) and Linux, except the local clipboard interactions (pbcopy &
-pbpaste). While I've only done some basic testing, here's how I made this work for me on other Operating Systems:
+I initially build this on my Mac, which has default tools to interact with the clipboard. Everything works fine on
+Windows (via Git Bash / WSL) and Linux, except the local clipboard interactions (pbcopy & pbpaste). While I've only done
+some basic testing, here's how I made this work for me on other Operating Systems:
 
 - [Setup pbcopy/pbpaste on Windows for Git Bash & WSL](https://www.techtronic.us/pbcopy-pbpaste-for-wsl/)
 - [Setup pbcopy/pbpaste on Linux](https://ostechnix.com/how-to-use-pbcopy-and-pbpaste-commands-on-linux/)
@@ -50,10 +51,11 @@ pbpaste). While I've only done some basic testing, here's how I made this work f
 ## Requirements & Dependencies
 
 - An internet connection!
-- Shell (something that can run `bash scripts`), so sorry, windows may not work (probably try via `git-bash`?)
+- Shell (something that can run `bash scripts`) (sorry, windows won't directly work with CMD... you can use it
+  via `git-bash` though!)
 
 This tools runs in the 'bash' environment and requires the following CLI commands for its proper functioning (generally,
-these are already available in various shells by default):
+these are available in various shells by default):
 
 - curl: To access the online clipboard
 - base64: For encoding text (to deal with special characters)
