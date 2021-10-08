@@ -4,6 +4,7 @@ A simple CLI utility tool to copy data across devices, over the internet!
 
 ![Shell CLI tool](https://img.shields.io/badge/runtime-bash-blue)
 ![Development Release Status](https://img.shields.io/badge/release-beta-orange)
+![MIT License](https://img.shields.io/github/license/the-codinator/LeetCodeTester)
 
 ## Installation
 
