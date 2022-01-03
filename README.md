@@ -12,7 +12,7 @@ UClip runs as a bash shell script & uses cl1p.net online clipboard.
 
 - Download the [script file](./uclip) and place it on the system `PATH`
   - You can clone this repo (`git clone https://github.com/the-codinator/uclip.git`)
-    and symlink the script file to some place on the PATH (`ln -s /usr/local/bin/uclip <path-to-repo>/uclip`). This
+    and symlink the script file to some place on the PATH (`ln -s <path-to-repo>/uclip /usr/local/bin/uclip`). This
     allows you to easily update the script by just running `git pull`
   - Alternatively, you can direct download the file and place it on the system `PATH`:
     `curl "https://raw.githubusercontent.com/the-codinator/uclip/master/uclip" -o /usr/local/bin/uclip`
